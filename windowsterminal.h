@@ -1,8 +1,17 @@
-#include <linux/ioctl.h>
-#include <termios.h>
+#include <windows.h>
 
-void get_terminal_size(){
+struct terminal {
+    int rows;
+    int cols;
+};
+
+struct terminal get_terminal_size(){
+    struct winsize terminal_size;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &terminal_size);
+    struct terminal terminal;
+    terminal.cols = terminal_size.ws_col
+    terminal.rows = terminal_size.ws_row
+    return terminal
 }
 
 struct termios get_terminal_settings() {

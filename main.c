@@ -1,7 +1,7 @@
 #ifdef __linux__ 
-    #include <linuxterminalfuncs.h>
+    #include <linuxterminal.h>
 #elif _WIN32
-    #include <windowsterminalfuncs.h>
+    #include <windowsterminal.h>
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,21 +9,22 @@
 #include <signal.h>
 #include <time.h> 
 
-struct winsize terminal_size;
-
-void update_terminal_size() {
-    terminal_size = get_terminal_size();
-}
-
 struct game_object {
     float x;
     float y;
     int s;
 };
 
+struct terminal terminal;
+
+void update_terminal_size() {
+    terminal = get_terminal_size();
+}
+
+
 void draw_current_game_frame(struct game_object bird, struct game_object *pipes, int NUMBER_OF_PIPES, int pipe_opening) {
-    int number_of_rows = terminal_size.ws_row;
-    int number_of_columns = terminal_size.ws_col; 
+    int number_of_rows = terminal.rows;
+    int number_of_columns = terminal.cols; 
 
     // Move cursor to top left of screen (so new game frame overwrites current screen)
     printf("\033[H");
@@ -51,7 +52,7 @@ void draw_current_game_frame(struct game_object bird, struct game_object *pipes,
                 int checker = 1;
                 for(int i = 0; i < NUMBER_OF_PIPES; i++){
                     if(pipes[i].x == column) {
-                        if(row <= pipes[i].y*(terminal_size.ws_row-1-pipe_opening) || row >= (pipes[i].y*(terminal_size.ws_row-1-pipe_opening))+pipe_opening){
+                        if(row <= pipes[i].y*(terminal.rows-1-pipe_opening) || row >= (pipes[i].y*(terminal.rows-1-pipe_opening))+pipe_opening){
                             putchar('#');
                             checker = 0;
                             break;
@@ -83,21 +84,21 @@ int main(int argc, char **argv){
     srand(time(NULL));
 
     signal(SIGWINCH, update_terminal_size);
-    terminal_size = get_terminal_size();
+    terminal = get_terminal_size();
     
-    bird.x = terminal_size.ws_col/8;
-    bird.y = (terminal_size.ws_row/3)*2;
+    bird.x = terminal.cols/8;
+    bird.y = (terminal.rows/3)*2;
     bird.s = 0;
     for(int i = 0; i < NUMBER_OF_PIPES; i++){
-        pipes[i].x = terminal_size.ws_col/3 + i*25;
+        pipes[i].x = terminal.cols/3 + i*25;
 
         pipes[i].y = rand()/(float)RAND_MAX;
     }
 
     draw_current_game_frame(bird, pipes, NUMBER_OF_PIPES, PIPE_GAP);
 
-    struct termios old = linux_get_terminal_settings();
-    linux_set_terminal_settings();
+    struct terminal_settings old = get_terminal_settings();
+    set_terminal_settings();
 
     int birdClock = 0;
     int pipeClock = 0;
@@ -138,8 +139,8 @@ int main(int argc, char **argv){
             // Move bird down according to bird fall speed
             if(birdClock == BIRD_FALL_SPEED){
                 // Stop bird at bottom edge of game window
-                if(bird.y > terminal_size.ws_row-2){
-                    bird.y = terminal_size.ws_row-1;
+                if(bird.y > terminal.rows-2){
+                    bird.y = terminal.rows-1;
                 }
                 else{
                     bird.y++;
