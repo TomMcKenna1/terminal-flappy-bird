@@ -17,25 +17,19 @@ struct game_object {
 
 struct terminal terminal;
 
-void update_terminal_size() {
-    terminal = get_terminal_size();
-}
-
-
 void draw_current_game_frame(struct game_object bird, struct game_object *pipes, int NUMBER_OF_PIPES, int pipe_opening) {
-    int number_of_rows = terminal.rows;
-    int number_of_columns = terminal.cols; 
+    terminal = get_terminal_size();
 
     // Move cursor to top left of screen (so new game frame overwrites current screen)
     printf("\033[H");
 
-    for(int row = 1; row <= number_of_rows; row++){
-        for(int column = 1; column <= number_of_columns; column++) {
+    for(int row = 1; row <= terminal.rows; row++){
+        for(int column = 1; column <= terminal.cols; column++) {
             //Draw border
-            if(row == 1 || row == number_of_rows) {
+            if(row == 1 || row == terminal.rows) {
                 putchar('-');
             }
-            else if(column == 1 || column == number_of_columns) {
+            else if(column == 1 || column == terminal.cols) {
                 putchar('|');
             }
             //Draw bird
@@ -82,8 +76,6 @@ int main(int argc, char **argv){
 
     // Set random seed to current time to ensure new pipe y values each execution
     srand(time(NULL));
-
-    signal(SIGWINCH, update_terminal_size);
     terminal = get_terminal_size();
     
     bird.x = terminal.cols/8;
@@ -166,6 +158,6 @@ int main(int argc, char **argv){
     }
 
     // Restore old terminal settings
-	tcsetattr(STDIN_FILENO, TCSANOW, &old);
+	// tcsetattr(STDIN_FILENO, TCSANOW, &old);
     return 0;
 }
