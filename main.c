@@ -1,15 +1,18 @@
+#ifdef __linux__ 
+    #include <linuxterminalfuncs.h>
+#elif _WIN32
+    #include <windowsterminalfuncs.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <linux/ioctl.h>
 #include <signal.h>
-#include <termios.h>
 #include <time.h> 
 
 struct winsize terminal_size;
 
-void set_win_size(){
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &terminal_size);
+void update_terminal_size() {
+    terminal_size = get_terminal_size();
 }
 
 struct game_object {
@@ -17,26 +20,6 @@ struct game_object {
     float y;
     int s;
 };
-
-struct termios linux_get_terminal_settings() {
-    struct termios terminal_settings
-    tcgetattr(STDIN_FILENO, &terminal_settings);
-    return terminal_settings;
-}
-
-void linux_set_terminal_settings(struct termios terminal_settings) {
-    struct termios new;
-	new = terminal_settings;
-	// Disable canonical mode and input echo
-	new.c_lflag &= (~ICANON & ~ECHO);
-	tcsetattr(STDIN_FILENO, TCSANOW, &new);
-}
-
-int check_user_input() {
-    int bytesWaiting;
-    ioctl(STDIN_FILENO, FIONREAD, &bytesWaiting);
-    return bytesWaiting;
-}
 
 void draw_current_game_frame(struct game_object bird, struct game_object *pipes, int NUMBER_OF_PIPES, int pipe_opening) {
     int number_of_rows = terminal_size.ws_row;
@@ -99,8 +82,8 @@ int main(int argc, char **argv){
     // Set random seed to current time to ensure new pipe y values each execution
     srand(time(NULL));
 
-    signal(SIGWINCH, set_win_size);
-    set_win_size();
+    signal(SIGWINCH, update_terminal_size);
+    terminal_size = get_terminal_size();
     
     bird.x = terminal_size.ws_col/8;
     bird.y = (terminal_size.ws_row/3)*2;
@@ -114,7 +97,7 @@ int main(int argc, char **argv){
     draw_current_game_frame(bird, pipes, NUMBER_OF_PIPES, PIPE_GAP);
 
     struct termios old = linux_get_terminal_settings();
-    linux_set_terminal_settings()
+    linux_set_terminal_settings();
 
     int birdClock = 0;
     int pipeClock = 0;
