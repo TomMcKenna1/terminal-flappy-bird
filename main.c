@@ -1,7 +1,7 @@
 #ifdef __linux__ 
-    #include <linuxterminal.h>
+    #include "linuxterminal.h"
 #elif _WIN32
-    #include <windowsterminal.h>
+    #include "windowsterminal.h"
 #endif
 #include <stdio.h>
 #include <stdlib.h>
