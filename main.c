@@ -18,7 +18,7 @@ struct game_object {
 struct terminal terminal;
 
 void draw_current_game_frame(struct game_object bird, struct game_object *pipes, int NUMBER_OF_PIPES, int pipe_opening) {
-    terminal = get_terminal_size();
+    terminal = get_terminal();
 
     // Move cursor to top left of screen (so new game frame overwrites current screen)
     printf("\033[H");
@@ -66,17 +66,19 @@ void draw_current_game_frame(struct game_object bird, struct game_object *pipes,
 int main(int argc, char **argv){
     int FRAME_DELAY = 50;
     int BIRD_FALL_SPEED = 2;
-    int BIRD_SPEED = 2;
+    int BIRD_SPEED = 1;
     int NUMBER_OF_PIPES = 100;
     int PIPE_GAP = 6;
 
-    int state = 0;
+    int state = 1;
     struct game_object bird;
     struct game_object pipes[NUMBER_OF_PIPES];
 
     // Set random seed to current time to ensure new pipe y values each execution
     srand(time(NULL));
-    terminal = get_terminal_size();
+
+    set_terminal_settings();
+    terminal = get_terminal();
     
     bird.x = terminal.cols/8;
     bird.y = (terminal.rows/3)*2;
@@ -89,40 +91,37 @@ int main(int argc, char **argv){
 
     draw_current_game_frame(bird, pipes, NUMBER_OF_PIPES, PIPE_GAP);
 
-    struct terminal_settings old = get_terminal_settings();
-    set_terminal_settings();
-
     int birdClock = 0;
     int pipeClock = 0;
-
+ 
     // Main loop
     while(1){
 
-        // Check keypresses
-        int bytesWaiting = check_user_input(); 
-        if(bytesWaiting > 0){
-        
-            // Clear stdin queue and take last input
-            int c;
-            for(int i = 0; i < bytesWaiting; i++){
-                c = getchar();
-            }
-            // Close game if q is pressed
-            if(c == 'q'){
-                break;
-            }
-            // Make bird jump if spacebar pressed
-            else if (c == ' '){
-                state = 1;
-                bird.y -= 4;
+        // // Check keypresses
+        // int bytesWaiting = get_input_buffer(); 
+        // if(bytesWaiting > 0){
+            
+        //     // Clear stdin queue and take last input
+        //     int c;
+        //     for(int i = 0; i < bytesWaiting; i++){
+        //         c = getchar();
+        //     }
+        //     // Close game if q is pressed
+        //     if(c == 'q'){
+        //         break;
+        //     }
+        //     // Make bird jump if spacebar pressed
+        //     else if (c == ' '){
+        //         state = 1;
+        //         bird.y -= 4;
 
-                // Stop bird at top edge of game window
-                if(bird.y < 2){
-                    bird.y = 2;
-                }
-                birdClock = 0;
-            }
-        }
+        //         // Stop bird at top edge of game window
+        //         if(bird.y < 2){
+        //             bird.y = 2;
+        //         }
+        //         birdClock = 0;
+        //     }
+        // }
 
         // Update game frame
         draw_current_game_frame(bird, pipes, NUMBER_OF_PIPES, PIPE_GAP);
