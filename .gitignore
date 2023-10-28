@@ -1,4 +1,4 @@
 .vscode
-executables
 
 *.exe
+*.elf
