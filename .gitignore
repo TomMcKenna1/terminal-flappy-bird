@@ -1,10 +1,4 @@
-*.d
+.vscode
+executables
 
 *.exe
-*.out
-*.app
-
-*.slo
-*.lo
-*.o
-*.obj
