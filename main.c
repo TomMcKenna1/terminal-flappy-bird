@@ -11,6 +11,7 @@ struct game_object {
 };
 
 struct terminal terminal;
+struct terminal terminal;
 
 void draw_current_game_frame(struct game_object bird, struct game_object *pipes, int NUMBER_OF_PIPES, int pipe_opening) {
     terminal = get_terminal_size();
