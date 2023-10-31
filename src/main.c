@@ -46,7 +46,7 @@ void draw_current_game_frame(struct game_object bird, struct game_object *pipes,
                             putchar('#');
                             checker = 0;
                             break;
-                        }  
+                        } 
                     }
                 }
                 if(checker){
@@ -139,6 +139,15 @@ int main(int argc, char **argv){
             if(pipeClock == BIRD_SPEED){
                 for (int i = 0; i < NUMBER_OF_PIPES; i++){
                     pipes[i].x--;
+                    // Check for collision
+                    if (
+                        pipes[i].x <= bird.x+4 &&
+                        pipes[i].x >= bird.x &&
+                        (bird.y <= pipes[i].y*(terminal.rows-1-PIPE_GAP) ||
+                        bird.y >= (pipes[i].y*(terminal.rows-1-PIPE_GAP))+PIPE_GAP)
+                    ) {
+                        state = 0;
+                    }
                 }
                 // Reset clock
                 pipeClock = 0;
