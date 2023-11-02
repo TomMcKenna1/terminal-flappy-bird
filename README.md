@@ -39,11 +39,15 @@ To play, follow the steps below.
    ```sh
    git clone https://github.com/TomMcKenna1/terminal-flappy-bird.git
    ```
-2. Run the `main.elf` file
+2. Navigate to the `terminal-flappy-bird` directory
+   ```sh
+   cd terminal-flappy-bird
+   ```
+3. Run the `main.elf` file
    ```sh
    ./main.elf
    ```
-3. Press the `spacebar` key to start the game!
+4. Press the `spacebar` key to start the game!
 
 Alternatively, you can compile the source code yourself. All source files can be found in the `/src` directory
 
