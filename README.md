@@ -43,13 +43,15 @@ To play, follow the steps below.
    ```sh
    cd terminal-flappy-bird
    ```
-3. Run the `main.elf` file
+3. Compile the source code
+   ```sh
+   gcc src/main.c -o main.elf
+   ```
+4. Run the `main.elf` file
    ```sh
    ./main.elf
    ```
-4. Press the `spacebar` key to start the game!
-
-Alternatively, you can compile the source code yourself. All source files can be found in the `/src` directory
+5. Press the `spacebar` key to start the game!
 
 <!-- GAME CONTROLS -->
 ## Controls
